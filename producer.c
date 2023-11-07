@@ -34,7 +34,7 @@ int main(int argc, char** argv){
     }
 
     // initialize the semaphore
-    if (sem_init(&shmp->sem, 1, 1) == -1) {
+    if (sem_init(&shmp->sem, 1, 0) == -1) {
         printf("Error on sem_init (p)\n");
         shm_unlink(sm_path);
         return -1;

@@ -33,7 +33,7 @@ int main(int argc, char** argv){
         return -1;
     }
 
-    printf("OUTPUT: %d", shmp->resources[0]);
+    printf("OUTPUT: %d\n", shmp->resources[0]);
 
     // unlink the shared memory object
     shm_unlink(sm_path);
