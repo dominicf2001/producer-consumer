@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <semaphore.h>
@@ -33,15 +34,34 @@ int main(int argc, char** argv){
         return -1;
     }
 
+    // set all the array values to 0
+    memset(shmp->resources, 0, sizeof(shmp->resources));
+
     // initialize the semaphore
-    if (sem_init(&shmp->sem, 1, 0) == -1) {
+    if (sem_init(&shmp->sem, 1, 1) == -1) {
         printf("Error on sem_init (p)\n");
         shm_unlink(sm_path);
         return -1;
     }
     
-    // set a test value
-    shmp->resources[0] = 2;
+    while (1) {
+        sem_wait(&shmp->sem);
+        
+        // loop until an empty spot is found
+        int i = 0;        
+        while (i != BUFFER_SIZE) {
+            // produce an item
+            if (!shmp->resources[i]) {
+                shmp->resources[i] = 5;
+                break;
+            }
+        }
 
-    sem_post(&shmp->sem);
+        printf("Producer: ");
+        print_resources(shmp->resources);
+
+        sleep(1);
+        
+        sem_post(&shmp->sem);
+    }
 }
