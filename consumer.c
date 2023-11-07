@@ -22,12 +22,14 @@ int main(int argc, char** argv){
     struct shared_memory* shmp = mmap(NULL, sizeof(struct shared_memory), PROT_READ | PROT_WRITE, MAP_SHARED, file_descriptor, 0);
     if (shmp == MAP_FAILED) {
         printf("Error on mmap (c)\n");
+        shm_unlink(sm_path);
         return -1;
     }
 
     // wait for the producer to produce
     if (sem_wait(&shmp->sem) == -1) {
         printf("Error on sem_init (c)\n");
+        shm_unlink(sm_path);
         return -1;
     }
 

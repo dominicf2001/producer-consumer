@@ -21,6 +21,7 @@ int main(int argc, char** argv){
     // set the memory size of the shared memory object to store the struct
     if (ftruncate(file_descriptor, sizeof(struct shared_memory)) == -1) {
         printf("Error on ftruncate (p)\n");
+        shm_unlink(sm_path);
         return -1;
     }
     
@@ -28,12 +29,14 @@ int main(int argc, char** argv){
     struct shared_memory* shmp = mmap(NULL, sizeof(struct shared_memory), PROT_READ | PROT_WRITE, MAP_SHARED, file_descriptor, 0);
     if (shmp == MAP_FAILED) {
         printf("Error on mmap (p)\n");
+        shm_unlink(sm_path);
         return -1;
     }
 
     // initialize the semaphore
-    if (sem_init(&shmp->sem, 1, -1) == -1) {
+    if (sem_init(&shmp->sem, 1, 1) == -1) {
         printf("Error on sem_init (p)\n");
+        shm_unlink(sm_path);
         return -1;
     }
     
