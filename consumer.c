@@ -8,7 +8,7 @@
 #include "./shm.h"
 
 int main(int argc, char** argv){
-    const char* sm_path = "/test";
+    const char* sm_path = "/data";
     
     // open the shared memory object
     int oflag = O_RDWR;
@@ -17,7 +17,7 @@ int main(int argc, char** argv){
         printf("Error on shm_open (c)\n");
         return -1;
     }
-
+    
     // map the shared memory object into this processes' memory space
     struct shared_memory* shmp = mmap(NULL, sizeof(struct shared_memory), PROT_READ | PROT_WRITE, MAP_SHARED, file_descriptor, 0);
     if (shmp == MAP_FAILED) {
@@ -26,13 +26,6 @@ int main(int argc, char** argv){
         return -1;
     }
     
-    // wait for the producer to produce
-    if (sem_wait(&shmp->sem) == -1) {
-        printf("Error on sem_init (c)\n");
-        shm_unlink(sm_path);
-        return -1;
-    }
-
     while (1) {
         sem_wait(&shmp->sem);
         
@@ -44,16 +37,12 @@ int main(int argc, char** argv){
                 shmp->resources[i] = 0;
                 break;
             }
+            ++i;
         }
 
         printf("Consumer: ");
         print_resources(shmp->resources);
-
-        sleep(1);
         
         sem_post(&shmp->sem);
     }
-
-    // unlink the shared memory object
-    shm_unlink(sm_path);
 }

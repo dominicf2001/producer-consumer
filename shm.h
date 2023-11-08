@@ -9,6 +9,7 @@
 
 struct shared_memory {
     sem_t sem;
+    
     int resources[BUFFER_SIZE];
 };
 

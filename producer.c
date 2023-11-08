@@ -9,7 +9,7 @@
 #include "./shm.h"
 
 int main(int argc, char** argv){
-    const char* sm_path = "/test";
+    const char* sm_path = "/data";
     
     // create the shared memory object
     int oflag = O_RDWR | O_CREAT | O_EXCL;
@@ -55,12 +55,11 @@ int main(int argc, char** argv){
                 shmp->resources[i] = 5;
                 break;
             }
+            ++i;
         }
 
         printf("Producer: ");
         print_resources(shmp->resources);
-
-        sleep(1);
         
         sem_post(&shmp->sem);
     }
