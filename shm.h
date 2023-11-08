@@ -5,7 +5,7 @@
 #include <semaphore.h>
 #include <stdio.h>
 
-#define BUFFER_SIZE 10
+#define BUFFER_SIZE 2
 
 struct shared_memory {
     sem_t sem;
